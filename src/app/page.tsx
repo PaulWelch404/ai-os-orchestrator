@@ -27,6 +27,25 @@ export default function AIOSDashboard() {
     }
   }, [messages]);
 
+  // Auto-discover local agents if registry is empty
+  useEffect(() => {
+    if (agents.length === 0) {
+      const discoveredAgents = [
+        { id: 'qwen35', name: 'Qwen 3.5', endpoint: 'http://localhost:11434', model: 'qwen3.5:4b' },
+        { id: 'gemma4', name: 'Gemma 4', endpoint: 'http://localhost:11434', model: 'gemma4:12b' },
+        { id: 'qwen-coder', name: 'Qwen Coder', endpoint: 'http://localhost:11434', model: 'qwen2.5-coder:latest' },
+      ];
+
+      discoveredAgents.forEach(agent => {
+        addAgent({
+          ...agent,
+          status: 'online',
+          lastResponseTime: 0,
+        });
+      });
+    }
+  }, []);
+
   const handleAddAgent = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newAgent.name || !newAgent.model) return;
